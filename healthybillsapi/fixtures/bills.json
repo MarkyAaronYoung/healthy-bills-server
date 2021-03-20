@@ -1,0 +1,15 @@
+[
+    {
+     "model": "healthybillsapi.bill",
+     "pk":  1,
+     "fields": {
+         "user": 1,
+         "provider": 1,
+         "bill_date": "2021-03-20",
+         "acct_number": "4567890-01",
+         "name_on_acct": "Mark A. Young",
+         "amount": 455.50,
+         "least_amount": 50.00
+     } 
+    }
+]
