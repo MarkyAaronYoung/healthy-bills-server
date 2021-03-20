@@ -1,9 +1,10 @@
 from django.db import models
+from django.conf import settings
 from django.db.models.deletion import CASCADE, SET_NULL
 
-class Bill(models.model):
+class Bill(models.Model):
     user = models.ForeignKey(
-        "User",
+        settings.AUTH_USER_MODEL,
         on_delete = CASCADE,
         related_name= "user",
         related_query_name= "users"
@@ -17,5 +18,5 @@ class Bill(models.model):
     bill_date = models.DateField()
     acct_number = models.CharField(max_length=30)
     name_on_acct = models.CharField(max_length=55)
-    amount = models.DecimalField()
-    least_amount = models.DecimalField()
+    amount = models.DecimalField(max_digits=20, decimal_places=2)
+    least_amount = models.DecimalField(max_digits=20, decimal_places=2)

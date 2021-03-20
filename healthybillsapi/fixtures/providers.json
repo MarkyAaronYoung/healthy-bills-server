@@ -1,0 +1,10 @@
+[
+    {
+        "model": "healthybillsapi.provider",
+        "pk": 1,
+        "fields": {
+            "provider_name": "Tristar Health",
+            "contact_number": "615-676-5603"
+        }
+    }
+]
