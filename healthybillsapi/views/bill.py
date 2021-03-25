@@ -1,41 +1,13 @@
 """View module for handling requests about bills"""
 from django.http import HttpResponseServerError
-from rest_framework.viewsets import ViewSet
+from rest_framework.decorators import action
+from django.db.models import Sum
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
-from healthybillsapi.models import bill
+from healthybillsapi.models import Bill
 
-class Bill(ViewSet):
-
-    def retrieve(self, request, pk=None):
-        """Handle GET requests for single game type
-
-        Returns:
-            Response -- JSON serialized game type
-        """
-        try:
-            bill = Bill.objects.get(pk=pk)
-            serializer = BillSerializer(bill, context={'request': request})
-            return Response(serializer.data)
-        except Exception as ex:
-            return HttpResponseServerError(ex)
-    
-    def list(self, request):
-        """Handle GET requests to get all bills
-
-        Returns:
-            Response -- JSON serialized list of bills
-        """
-        bills = Bill.objects.all()
-
-        # Note the addtional `many=True` argument to the
-        # serializer. It's needed when you are serializing
-        # a list of objects instead of a single object.
-        serializer = BillSerializer(
-            bills, many=True, context={'request': request})
-        return Response(serializer.data)
-
-class BillSerializer(serializers.HyperlinkedModelSerializer):
+class BillSerializer(serializers.ModelSerializer):
     """JSON serializer for bills
 
     Arguments:
@@ -48,3 +20,19 @@ class BillSerializer(serializers.HyperlinkedModelSerializer):
             lookup_field='id'
         )
         fields = ('id', 'user', 'provider', 'bill_date', 'acct_number', 'name_on_acct', 'amount', 'least_amount')
+        depth = 1
+        
+class BillViewSet(ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing accounts.
+    """
+    queryset = Bill.objects.all()
+    serializer_class = BillSerializer
+
+    @action(detail=False)
+    def sum_bill_amounts(self, requests):
+        return Response(Bill.objects.all().aggregate(Sum('amount')))
+
+    @action(detail=False)
+    def sum_least_amounts(self, requests):
+        return Response(Bill.objects.all().aggregate(Sum('least_amount')))
